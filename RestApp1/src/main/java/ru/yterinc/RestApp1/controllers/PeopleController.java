@@ -1,11 +1,12 @@
 package ru.yterinc.RestApp1.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import ru.yterinc.RestApp1.services.PeopleService;
+import ru.yterinc.RestApp1.util.PersonErrorResponse;
+import ru.yterinc.RestApp1.util.PersonNotFoundException;
 
 import java.util.List;
 
@@ -29,5 +30,16 @@ public class PeopleController {
     public Person getPerson(@PathVariable("id") int id) {
         return peopleService.findOne(id);
     }
+
+    @ExceptionHandler
+    private ResponseEntity<PersonErrorResponse> handleException(PersonNotFoundException e) {
+        PersonErrorResponse response = new PersonErrorResponse(
+                "Person with id wasn't found",
+                System.currentTimeMillis()
+        );
+        // в HTTP ответе тело ответа (response) и статус в заголовке
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND); // NOT_FOUND - 404
+    }
+
 
 }
