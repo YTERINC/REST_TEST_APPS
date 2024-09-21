@@ -1,6 +1,7 @@
 package ru.yterinc.RestApp1.controllers;
 
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,6 @@ import ru.yterinc.RestApp1.util.PersonErrorResponse;
 import ru.yterinc.RestApp1.util.PersonNotCratedException;
 import ru.yterinc.RestApp1.util.PersonNotFoundException;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -79,13 +79,9 @@ public class PeopleController {
     }
 
     private Person convertToPerson(PersonDTO personDTO) {
-        Person person = new Person();
-        person.setName(personDTO.getName());
-        person.setAge(personDTO.getAge());
-        person.setEmail(personDTO.getEmail());
-        return person;
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(personDTO, Person.class);
     }
-
 
 
 }
