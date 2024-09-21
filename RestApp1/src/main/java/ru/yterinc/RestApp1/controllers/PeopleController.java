@@ -16,26 +16,31 @@ import ru.yterinc.RestApp1.util.PersonNotCratedException;
 import ru.yterinc.RestApp1.util.PersonNotFoundException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/people")
 public class PeopleController {
 
     private final PeopleService peopleService;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public PeopleController(PeopleService peopleService) {
+    public PeopleController(PeopleService peopleService,
+                            ModelMapper modelMapper) {
         this.peopleService = peopleService;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping()
-    public List<Person> getPeople() {
-        return peopleService.findAll(); // Jackson конвертирует объекты в JSON
+    public List<PersonDTO> getPeople() {
+        return peopleService.findAll().stream().map(this::convertToPersonDTO).
+                collect(Collectors.toList()); // Jackson конвертирует объекты в JSON
     }
 
     @GetMapping("/{id}")
-    public Person getPerson(@PathVariable("id") int id) {
-        return peopleService.findOne(id);
+    public PersonDTO getPerson(@PathVariable("id") int id) {
+        return convertToPersonDTO(peopleService.findOne(id));
     }
 
     @PostMapping
@@ -79,9 +84,11 @@ public class PeopleController {
     }
 
     private Person convertToPerson(PersonDTO personDTO) {
-        ModelMapper modelMapper = new ModelMapper();
         return modelMapper.map(personDTO, Person.class);
     }
 
+    private PersonDTO convertToPersonDTO(Person person) {
+        return modelMapper.map(person, PersonDTO.class);
+    }
 
 }
