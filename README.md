@@ -1,1 +1,1 @@
-<h2 align="center"><u>Проект для исследования фреймворка Hibernate</u>
+<h2 align="center"><u>Тестовые приложения REST API</u>
